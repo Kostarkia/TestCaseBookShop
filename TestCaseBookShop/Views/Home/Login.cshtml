@@ -1,0 +1,82 @@
+﻿<section class="vh-100 ">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card  text-white" style="border-radius: 1rem;">
+                    <div class="card-body bg-black-coffee rounded-6 p-5  text-center">
+
+                        <div class="mb-md-5 mt-md-4 pb-5">
+
+                            <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                            <p class="text-white-50 mb-5">Please enter your login and password!</p>
+
+                            <form id="loginForm">
+                            <div class="form-outline form-white mb-4 border rounded-3">
+                                <input type="text" id="usernameInput" class="form-control form-control-lg" value="ferhatbolat@carettaerp.com"/>
+                                <label class="form-label" >User Name</label>
+                            </div>
+
+                            <div class="form-outline form-white mb-4 border rounded-3">
+                                <input type="password" id="passwordInput" class="form-control form-control-lg " value="caretta" />
+                                <label class="form-label" >Password</label>
+                            </div>
+
+                            @* <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p> *@
+
+                            <button class="btn btn-outline-light btn-lg px-5 custom-hover" id="loginMessage" type="submit">Login</button>
+
+                            </form>
+                        </div>
+
+                        @* <div>
+                            <p class="mb-0">
+                                Don't have an account? <a href="#!" class="text-white-50 fw-bold">Sign Up</a>
+                            </p>
+                        </div> *@
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script>
+
+        $(document).ready(function(){
+            $("#loginForm").on("submit", function(event){
+                event.preventDefault();
+
+                let username = $("#usernameInput").val().trim();
+                let pass = $("#passwordInput").val().trim();
+
+                if(username === "" || pass === "")
+                {
+                  $("#loginMessage").html('<div class="alert alert-danger">Lütfen tüm alanları doldurun!</div>');
+                    return;
+                }
+
+                $.ajax({
+                    url: "/Login/Login",
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        UserName: username,
+                        Password: pass
+                    }),
+                    success: function(response){
+                        if(response.success) {
+                            localStorage.setItem('token', response.tokenResponse.accessToken);
+                            window.location.href = "/Home/Book/Index";
+                        } else {
+                            $("#loginMessage").html('<div class="alert alert-danger">' + response.message + '</div>');
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
+}
